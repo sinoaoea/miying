@@ -1,7 +1,7 @@
 {
-    "name": "LibreTV",
-    "short_name": "LibreTV",
-    "description": "免费在线视频搜索与观看平台",
+    "name": "MiyingTV",
+    "short_name": "MiyingTV",
+    "description": "影视流媒体资源搜索平台 - 自由、纯净、无广告",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0f1622",
