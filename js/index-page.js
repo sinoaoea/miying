@@ -27,7 +27,7 @@
                 try {
                     window.history.replaceState(
                         { search: keyword }, 
-                        `搜索: ${keyword} - LibreTV`, 
+                        `搜索: ${keyword} - MiyingTV`, 
                         window.location.href
                     );
                 } catch (e) {
@@ -51,7 +51,7 @@
             try {
                 window.history.replaceState(
                     { search: searchQuery }, 
-                    `搜索: ${searchQuery} - LibreTV`, 
+                    `搜索: ${searchQuery} - MiyingTV`, 
                     `/s=${encodeURIComponent(searchQuery)}`
                 );
             } catch (e) {
