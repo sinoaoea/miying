@@ -1275,7 +1275,7 @@ async function importConfigFromUrl() {
             }
 
             const config = await response.json();
-            if (config.name !== 'MiyingTV-Settings') throw '配置文件格式不正确';
+            if (config.name !== 'Libretv-Settings') throw '配置文件格式不正确';
 
             // 验证哈希
             const dataHash = await sha256(JSON.stringify(config.data));
