@@ -1,6 +1,6 @@
 FROM fabiocicerchia/nginx-lua:1.27.5-alpine3.21.3
 LABEL maintainer="LibreTV Team"
-LABEL description="LibreTV - 免费在线视频搜索与观看平台"
+LABEL description="MiyingTV - 影视流媒体资源搜索平台 - 自由、纯净、无广告"
 
 # 复制应用文件
 COPY . /usr/share/nginx/html
