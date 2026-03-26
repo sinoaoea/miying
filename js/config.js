@@ -12,9 +12,9 @@ const PASSWORD_CONFIG = {
 
 // 网站信息配置
 const SITE_CONFIG = {
-    name: 'LibreTV',
+    name: 'MiyingTV',
     url: 'https://libretv.is-an.org',
-    description: '免费在线视频搜索与观看平台',
+    description: '影视流媒体资源搜索引擎 - 自由、纯净、无广告',
     logo: 'image/logo.png',
     version: '1.0.3'
 };
