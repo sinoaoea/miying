@@ -101,6 +101,10 @@ let shortcutHintTimeout = null; // 用于控制快捷键提示显示时间
 let adFilteringEnabled = true; // 默认开启广告过滤
 let progressSaveInterval = null; // 定期保存进度的计时器
 let currentVideoUrl = ''; // 记录当前实际的视频URL
+const PAUSE_AD_CONFIG = {
+    imageUrl: 'https://img.alicdn.com/imgextra/i3/O1CN01a9B98c1PuFSwJICkl_!!6000000001900-0-tps-800-450.jpg',
+    linkUrl: 'https://s.click.taobao.com/pzMEfCm',
+};
 
 // 页面加载
 document.addEventListener('DOMContentLoaded', function () {
@@ -318,6 +322,54 @@ function handleKeyboardShortcuts(e) {
     }
 }
 
+function setupPauseAd() {
+    const overlay = document.getElementById('pauseAdOverlay');
+    const closeButton = document.getElementById('pauseAdClose');
+    const link = document.getElementById('pauseAdLink');
+    const image = document.getElementById('pauseAdImage');
+
+    if (!overlay || !closeButton || !link || !image || overlay.dataset.initialized === 'true') {
+        return;
+    }
+
+    link.href = PAUSE_AD_CONFIG.linkUrl;
+    image.src = PAUSE_AD_CONFIG.imageUrl;
+
+    closeButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        hidePauseAd();
+    });
+
+    overlay.addEventListener('click', function (event) {
+        if (event.target === overlay) {
+            hidePauseAd();
+        }
+    });
+
+    overlay.dataset.initialized = 'true';
+}
+
+function showPauseAd() {
+    const overlay = document.getElementById('pauseAdOverlay');
+    if (!overlay || videoHasEnded) return;
+
+    overlay.classList.remove('hidden');
+    overlay.setAttribute('aria-hidden', 'false');
+}
+
+function hidePauseAd() {
+    const overlay = document.getElementById('pauseAdOverlay');
+    if (!overlay) return;
+
+    overlay.classList.add('hidden');
+    overlay.setAttribute('aria-hidden', 'true');
+}
+
+function setFullscreenState(isFullscreen) {
+    document.body.classList.toggle('player-is-fullscreen', Boolean(isFullscreen));
+}
+
 // 显示快捷键提示
 function showShortcutHint(text, direction) {
     const hintElement = document.getElementById('shortcutHint');
@@ -354,6 +406,8 @@ function initPlayer(videoUrl) {
     }
 
     console.log('初始化播放器:', videoUrl);
+    setupPauseAd();
+    hidePauseAd();
 
     // 销毁旧实例
     if (art) {
@@ -548,6 +602,7 @@ function initPlayer(videoUrl) {
 
     // 全屏模式处理
     art.on('fullscreen', function () {
+        setFullscreenState(art.fullscreen);
         if (window.screen.orientation && window.screen.orientation.lock) {
             window.screen.orientation.lock('landscape')
                 .then(() => {
@@ -559,9 +614,14 @@ function initPlayer(videoUrl) {
         }
     });
 
+    art.on('fullscreenWeb', function () {
+        setFullscreenState(Boolean(art.fullscreenWeb));
+    });
+
     art.on('video:loadmetadata', function() {
         document.getElementById('loading').style.display = 'none';
         videoHasEnded = false; // 视频加载时重置结束标志
+        hidePauseAd();
         // 优先使用URL传递的position参数
         const urlParams = new URLSearchParams(window.location.search);
         const savedPosition = parseInt(urlParams.get('position') || '0');
@@ -627,6 +687,7 @@ function initPlayer(videoUrl) {
     // 视频播放结束事件
     art.on('video:ended', function () {
         videoHasEnded = true;
+        hidePauseAd();
 
         clearVideoProgress();
 
@@ -646,6 +707,7 @@ function initPlayer(videoUrl) {
 
     // 添加双击全屏支持
     art.on('video:playing', () => {
+        hidePauseAd();
         // 绑定双击事件到视频容器
         if (art.video) {
             art.video.addEventListener('dblclick', () => {
@@ -672,6 +734,15 @@ function initPlayer(videoUrl) {
             `;
         }
     }, 10000);
+
+    art.on('video:pause', () => {
+        if (!art || !art.video || videoHasEnded || art.video.ended) {
+            hidePauseAd();
+            return;
+        }
+
+        showPauseAd();
+    });
 }
 
 // 自定义M3U8 Loader用于过滤广告
@@ -841,6 +912,7 @@ function playEpisode(index) {
     currentEpisodeIndex = index;
     currentVideoUrl = url;
     videoHasEnded = false; // 重置视频结束标志
+    hidePauseAd();
 
     clearVideoProgress();
 
