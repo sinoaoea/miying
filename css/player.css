@@ -61,6 +61,68 @@ body, html {
     font-size: 48px;
     margin-bottom: 10px;
 }
+.pause-ad-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 130;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(6px);
+}
+.pause-ad-overlay.hidden {
+    display: none;
+}
+.pause-ad-card {
+    position: relative;
+    display: block;
+    width: min(100%, 720px);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.pause-ad-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+.pause-ad-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+.pause-ad-tip {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+}
+.pause-ad-close {
+    position: absolute;
+    top: max(12px, env(safe-area-inset-top, 0px) + 12px);
+    right: max(12px, env(safe-area-inset-right, 0px) + 12px);
+    z-index: 1;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+}
+.pause-ad-close:hover {
+    background: rgba(0, 0, 0, 0.88);
+}
 .episode-active {
     background-color: #3b82f6 !important;
     border-color: #60a5fa !important;
@@ -158,7 +220,7 @@ input:checked + .slider:before {
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    z-index: 10000;
+    z-index: 2147483647;
     background-color: #000;
 }
 .player-container:-webkit-full-screen #player,
@@ -166,10 +228,22 @@ input:checked + .slider:before {
     width: 100%; height: 100%;
 }
 
+body.player-is-fullscreen {
+    padding-top: 0 !important;
+}
+
+body.player-is-fullscreen .player-header-fixed {
+    display: none !important;
+}
+
 /* 新增：移动端响应式样式 */
 @media (max-width: 640px) {
     .episode-grid {
         max-height: 40vh; /* 移动端增加集数列表高度 */
+    }
+
+    .pause-ad-overlay {
+        padding: 12px;
     }
     
     /* 改进移动端按钮显示 */
